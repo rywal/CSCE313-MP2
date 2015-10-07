@@ -12,14 +12,17 @@
 
 #ifndef _my_allocator_h_                   // include file only once
 #define _my_allocator_h_
-
+#pragma pack(1)
 struct node {
 	// --Header
-	struct node *next;
+	struct node* next;
 	//Note: if size is odd, size = size + 1 (i.e. block is used)
 	int size;
 };
 
+node** headers;
+node* head;
+int M, b;
 typedef void * Addr;
 
 

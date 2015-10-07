@@ -13,10 +13,20 @@
 */
 
 #include<stdlib.h>
+#include <math.h>
 #include "my_allocator.h"
 
 /* Don't forget to implement "init_allocator" and "release_allocator"! */
 unsigned int init_allocator(unsigned int _basic_block_size, unsigned int _length){
+	//TODO: input error checking
+	M = _length;
+	b = _basic_block_size;
+	int last_index = log2 (M/b)
+	headers = new node*[last_index + 1]();
+	head = malloc(M);
+	headers[last_index] = (struct node*) head;
+	headers[last_index]->next = null_ptr;
+	headers[last_index]->size = M;
 	
 } 
 
