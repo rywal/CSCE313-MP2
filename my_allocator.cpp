@@ -15,15 +15,10 @@
 #include<stdlib.h>
 #include "my_allocator.h"
 
-struct node {
-	// --Header
-	struct node *next;
-	//Note: if size is odd, size = size + 1 (i.e. block is used)
-	int size;
-};
-
 /* Don't forget to implement "init_allocator" and "release_allocator"! */
-
+unsigned int init_allocator(unsigned int _basic_block_size, unsigned int _length){
+	
+} 
 
 extern Addr my_malloc(unsigned int _length) {
   /* This preliminary implementation simply hands the call over the 
