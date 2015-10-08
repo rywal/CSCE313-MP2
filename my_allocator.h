@@ -23,6 +23,7 @@ struct node {
 
 typedef void * Addr;
 
+void print_list();
 
 extern unsigned int init_allocator(unsigned int _basic_block_size,
 			    unsigned int _length); 

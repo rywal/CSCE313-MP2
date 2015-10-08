@@ -13,6 +13,7 @@
 */
 
 #include<stdlib.h>
+#include <stdio.h>
 #include <math.h>
 #include "my_allocator.h"
 
@@ -20,6 +21,13 @@ int header_size = sizeof(node);
 node** headers;
 node* head;
 int M, b;
+
+void print_list(){
+    for (int x = 0; x <= log2(M/b); x++) {
+        if(headers[x] != NULL)
+            printf("Element: %i\n", x);
+    }
+}
 
 /* Don't forget to implement "init_allocator" and "release_allocator"! */
 unsigned int init_allocator(unsigned int _basic_block_size, unsigned int _length){
