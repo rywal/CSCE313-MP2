@@ -107,6 +107,7 @@ extern Addr my_malloc(unsigned int _length) {
 	}
 	return result;
 }
+
 void add_to_free(struct node *new_node, int index){
 	new_node->next = NULL;
 	if(headers[index] != NULL){
@@ -120,6 +121,31 @@ void add_to_free(struct node *new_node, int index){
 	}
 }
 
+void remove_from_free(struct node* old_node, int index){
+    struct node* ittr = headers[index];
+    if(ittr == old_node){
+        if(ittr->next == NULL)
+            headers[index] = NULL;
+        else
+            headers[index] = ittr->next;
+        return;
+    }
+    while(ittr->next != old_node && ittr->next != NULL){
+        ittr = ittr->next;
+    }
+    if(ittr->next == NULL) {
+        
+        return; // Error: node not found
+    }
+    if(ittr->next->next == NULL)
+        ittr->next = NULL;
+    else
+        ittr->next = ittr->next->next;
+    
+    return;
+    
+}
+
 void combine(Addr _a){
 	struct node *current_node = (struct node*)_a;
 	int size = current_node->size - 1;
@@ -129,10 +155,11 @@ void combine(Addr _a){
 	if(buddy_node->size % 2 == 0){
 		//buddy node is empty
 		//combine
+        remove_from_free(buddy_node, current_index);
 		struct node *large_node = current_node;
 		large_node->size = size * 2;
 		large_node->next = NULL;
-        void* start_point = (char*)_a + header_size;
+        void* start_point = (Addr)((char*)_a + header_size);
 		memset(start_point, 0, (int)(large_node->size - header_size));
 		combine(_a);
 	}else{
