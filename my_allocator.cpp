@@ -32,29 +32,53 @@ unsigned int init_allocator(unsigned int _basic_block_size, unsigned int _length
 int release_allocator(){
 	
 }
+int size_available(int i){
+	return (b*pow(2, i))-header_size);
+}
+void init_block(node* start, int size){
+	
+}
+
+int choose_index(unsigned int _length){
+	for(int i = 0; i < headers.size(); i++){
+		if(headers[i] != NULL && (_length <= size_available(i)) {
+			if(i = 0)	return i;
+			if(_length <= size_available(i-1)){
+				//Split block and recursivly call
+				headers[i-1] = headers[i];
+				if(headers[i]->next != NULL && headers[i]->next->size % 2 == 0){
+					headers[i] = headers[i]->next;
+				}else{
+					headers[i] = NULL;
+				}
+				char* next = (char*)headers[i-1] + b*pow(2, i-1);
+				struct node *new_node = (struct node*)next;
+				new_node->next = NULL;
+				new_node->size = b*pow(2, i-1);
+				headers[i-1]->size = b*pow(2, i-1);
+				headers[i-1]->next = new_node;
+				return choose_index(_length);
+			}else{
+				return i;
+			}
+		}
+	}
+}
 
 extern Addr my_malloc(unsigned int _length) {
-  /* This preliminary implementation simply hands the call over the 
-     the C standard library! 
-     Of course this needs to be replaced by your implementation.
-  */
- 
-  int fitting_index = -1;
-  for(int i = 0; i < headers.size(); i++){
-	  if(_length <= (b * (i+1)) - header_size){
-			if(headers[i] != NULL){
-				headers[i]->size += 1;
-				return (char*) headers[i] + header_size;
-			}else{
-				
-			}
-			fitting_index = i;
-	  }
-  }
-  if(fitting_index = -1){
-	  //TODO: handle error where not enough memory
-  }
-  return malloc((size_t)_length);
+	/* This preliminary implementation simply hands the call over the 
+	 the C standard library! 
+	 Of course this needs to be replaced by your implementation.
+	*/
+	int insert = choose_index(_length);
+	headers[index]->size += 1;
+	Addr result = (Addr)headers[index] + header_size;
+	if(headers[index]->next != NULL && headers[index]->next->size %2 == 0){
+		headers[index] = headers[index]->next;
+	}else{
+		headers[index] = NULL;
+	}
+	return result;
 }
 
 extern int my_free(Addr _a) {
