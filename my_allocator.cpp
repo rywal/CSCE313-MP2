@@ -112,8 +112,13 @@ extern Addr my_malloc(unsigned int _length) {
 }
 
 extern int my_free(Addr _a) {
-  /* Same here! */
-  free(_a);
-  return 0;
+    // Get start of header
+    Addr adjusted_address = _a - header_size;
+    
+    // Find node with adjusted address
+    node* current_node = adjusted_address;
+    
+    
+    return 0;
 }
 
