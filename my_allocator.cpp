@@ -67,7 +67,7 @@ void init_block(node* start, int size){
 
 int choose_index(unsigned int _length){
     // printf("\n--In choose_index\n");
-    // print_list();git s
+    // print_list();
     int number_headers = log2 (M/b);
 	for(int i = 0; i <= number_headers; i++){
 		if(headers[i] != NULL && (_length <= size_available(i))) {
