@@ -12,22 +12,19 @@
 
 #ifndef _my_allocator_h_                   // include file only once
 #define _my_allocator_h_
+
 #pragma pack(1)
 struct node {
-	// --Header
-	struct node* next;
-	//Note: if size is odd, size = size + 1 (i.e. block is used)
-	int size;
+    // --Header
+    struct node* next;
+    //Note: if size is odd, size = size + 1 (i.e. block is used)
+    int size;
 };
 
-int header_size = sizeof(node);
-node** headers;
-node* head;
-int M, b;
 typedef void * Addr;
 
 
-unsigned int init_allocator(unsigned int _basic_block_size, 
+extern unsigned int init_allocator(unsigned int _basic_block_size,
 			    unsigned int _length); 
 /* This function initializes the memory allocator and makes a portion of 
    ’_length’ bytes available. The allocator uses a ’_basic_block_size’ as 

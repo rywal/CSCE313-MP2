@@ -16,6 +16,11 @@
 #include <math.h>
 #include "my_allocator.h"
 
+int header_size = sizeof(node);
+node** headers;
+node* head;
+int M, b;
+
 /* Don't forget to implement "init_allocator" and "release_allocator"! */
 unsigned int init_allocator(unsigned int _basic_block_size, unsigned int _length){
 	//TODO: input error checking
@@ -23,26 +28,30 @@ unsigned int init_allocator(unsigned int _basic_block_size, unsigned int _length
 	b = _basic_block_size;
 	int last_index = log2 (M/b);
 	headers = new node*[last_index + 1]();
-	head = malloc(M);
+	head = (node *)malloc(M);
 	headers[last_index] = (struct node*) head;
 	headers[last_index]->next = NULL;
 	headers[last_index]->size = M;
 	return 0;
-} 
+}
+
 int release_allocator(){
-	
+    return 0;
 }
+
 int size_available(int i){
-	return (b*pow(2, i))-header_size);
+	return (b*pow(2, i))-header_size;
 }
+
 void init_block(node* start, int size){
 	
 }
 
 int choose_index(unsigned int _length){
-	for(int i = 0; i < headers.size(); i++){
-		if(headers[i] != NULL && (_length <= size_available(i)) {
-			if(i = 0)	return i;
+    int number_headers = log2 (M/b);
+	for(int i = 0; i <= number_headers; i++){
+		if(headers[i] != NULL && (_length <= size_available(i))) {
+			if(i == 0)	return i;
 			if(_length <= size_available(i-1)){
 				//Split block and recursivly call
 				headers[i-1] = headers[i];
@@ -51,11 +60,11 @@ int choose_index(unsigned int _length){
 				}else{
 					headers[i] = NULL;
 				}
-				char* next = (char*)headers[i-1] + b*pow(2, i-1);
+				char* next = (char*)headers[i-1] + b*(int)pow(2, i-1);
 				struct node *new_node = (struct node*)next;
 				new_node->next = NULL;
-				new_node->size = b*pow(2, i-1);
-				headers[i-1]->size = b*pow(2, i-1);
+				new_node->size = b*(int)pow(2, i-1);
+				headers[i-1]->size = b*(int)pow(2, i-1);
 				headers[i-1]->next = new_node;
 				return choose_index(_length);
 			}else{
@@ -63,6 +72,7 @@ int choose_index(unsigned int _length){
 			}
 		}
 	}
+    return -1;
 }
 
 extern Addr my_malloc(unsigned int _length) {
@@ -70,9 +80,9 @@ extern Addr my_malloc(unsigned int _length) {
 	 the C standard library! 
 	 Of course this needs to be replaced by your implementation.
 	*/
-	int insert = choose_index(_length);
+	int index = choose_index(_length);
 	headers[index]->size += 1;
-	Addr result = (Addr)headers[index] + header_size;
+	Addr result = (Addr)((char *)headers[index] + header_size);
 	if(headers[index]->next != NULL && headers[index]->next->size %2 == 0){
 		headers[index] = headers[index]->next;
 	}else{
