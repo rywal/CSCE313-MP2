@@ -112,12 +112,13 @@ void add_to_free(struct node *new_node, int index){
 	new_node->next = NULL;
 	if(headers[index] != NULL){
 		struct node *ittr = headers[index];
-		while(ittr->next != NULL){
+		while(ittr->next != NULL && ittr->next < new_node){
 			ittr = ittr->next;
 		}
+        new_node->next = ittr->next;
 		ittr->next = new_node;
 	}else{
-		headers[index] = new_node;			
+		headers[index] = new_node;
 	}
 }
 
@@ -147,27 +148,35 @@ void remove_from_free(struct node* old_node, int index){
 }
 
 void combine(Addr _a){
-	struct node *current_node = (struct node*)_a;
-	int size = current_node->size - 1;
-	int current_index = log2(size/b);
-	if(current_index == log2(M/b))	return;
+    printf("\n--In combine:\n");
+    print_list();
+    printf("\n");
+    
+    struct node *current_node = (struct node*)_a;
+    int size = current_node->size;
+    int current_index = log2(size/b);
+    if(current_index == log2(M/b)) {
+        add_to_free(current_node, current_index);
+        return;
+    }
     struct node *buddy_node = (struct node*)((unsigned long)current_node ^ (unsigned long) size);
-	if(buddy_node->size % 2 == 0){
-		//buddy node is empty
-		//combine
+    if(buddy_node->size % 2 == 0){
+        //buddy node is empty
+        //combine
         remove_from_free(buddy_node, current_index);
-		struct node *large_node = current_node;
-		large_node->size = size * 2;
-		large_node->next = NULL;
+        struct node *large_node = current_node;
+        large_node->size = size * 2;
+        large_node->next = NULL;
         void* start_point = (Addr)((char*)_a + header_size);
-		memset(start_point, 0, (int)(large_node->size - header_size));
-		combine(_a);
-	}else{
-		//buddy node in use
-		//don't combine
-		add_to_free(current_node, current_index);
-		return;
-	}
+        memset(start_point, 0, (int)(large_node->size - header_size));
+        add_to_free(large_node, current_index);
+        combine(_a);
+    }else{
+        //buddy node in use
+        //don't combine
+        add_to_free(current_node, current_index);
+        return;
+    }
 	
 }
 
@@ -177,6 +186,7 @@ extern int my_free(Addr _a) {
     Addr adjusted_address = (Addr)((char*)_a - header_size);
 	struct node *current_node = (struct node*)adjusted_address;
     memset(_a, 0, current_node->size - header_size);
+    current_node->size -= 1;
 	combine(adjusted_address);     
     return 0;
 }

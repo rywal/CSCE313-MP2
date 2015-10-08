@@ -14,18 +14,18 @@ int main(int argc, char ** argv) {
     printf("Step 1 - Printing\n");
     print_list();
     
-    printf("\nStep 2 - Adding 80\n");
-    Addr address1 = my_malloc(80);
+    printf("\nStep 2 - Adding 200\n");
+    Addr address1 = my_malloc(200);
     print_list();
     
-    printf("\nStep 3 - Deleting 80\n");
+    printf("\nStep 3 - Deleting 200\n");
     my_free(address1);
     print_list();
     
     
-    printf("\nStep 4 - Adding 100\n");
-    Addr address2 = my_malloc(100);
-    print_list();
+//    printf("\nStep 4 - Adding 100\n");
+//    Addr address2 = my_malloc(100);
+//    print_list();
     
     
     //ackerman_main();
