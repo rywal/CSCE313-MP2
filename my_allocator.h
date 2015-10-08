@@ -42,7 +42,11 @@ int release_allocator();
 Addr my_malloc(unsigned int _length); 
 /* Allocate _length number of bytes of free memory and returns the 
    address of the allocated portion. Returns 0 when out of memory. */ 
+   
+void add_to_free(struct node *new_node, int index);
 
+void combine(Addr _a);
+   
 int my_free(Addr _a); 
 /* Frees the section of physical memory previously allocated 
    using ’my_malloc’. Returns 0 if everything ok. */ 

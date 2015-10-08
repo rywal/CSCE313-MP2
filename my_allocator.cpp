@@ -61,10 +61,6 @@ int size_available(int i){
 	return (b*pow(2, i))-header_size;
 }
 
-void init_block(node* start, int size){
-	
-}
-
 int choose_index(unsigned int _length){
     // printf("\n--In choose_index\n");
     // print_list();
@@ -110,15 +106,49 @@ extern Addr my_malloc(unsigned int _length) {
 	}
 	return result;
 }
+void add_to_free(struct node *new_node, int index){
+	new_node->next = NULL;
+	if(headers[index] != NULL){
+		struct node *ittr = headers[index];
+		while(ittr->next != NULL){
+			ittr = ittr->next;
+		}
+		ittr->next = new_node;
+	}else{
+		headers[index] = new_node;			
+	}
+}
+
+void combine(Addr _a){
+	struct node *current_node = (struct node*)_a;
+	int size = current_node->size - 1;
+	int current_index = log2(size/b);
+	if(current_index == last_index)	return;
+	struct node *buddy_node = (struct node*)((unsigned long)current_node ^ (unsigned long) size)
+	if(buddy_node->size % 2 == 0){
+		//buddy node is empty
+		//combine
+		struct node *large_node = current_node;
+		large_node->size = size * 2;
+		large_node->next = NULL;
+		memcpy(_a + header_size, 0, large_node->size - header_size);
+		combine(_a);
+	}else{
+		//buddy node in use
+		//don't combine
+		add_to_free(current_node, current_index);
+		return;
+	}
+	
+}
 
 extern int my_free(Addr _a) {
+	//TODO: Handle case of trying to free already free address
     // Get start of header
     Addr adjusted_address = _a - header_size;
-    
-    // Find node with adjusted address
-    node* current_node = adjusted_address;
-    
-    
+	struct node *current_node = (struct node*)adjusted_address;
+    memccpy(_a, 0, current_node->size - header_size);
+	combine(adjusted_address);     
     return 0;
 }
 
