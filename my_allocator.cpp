@@ -21,20 +21,39 @@ unsigned int init_allocator(unsigned int _basic_block_size, unsigned int _length
 	//TODO: input error checking
 	M = _length;
 	b = _basic_block_size;
-	int last_index = log2 (M/b)
+	int last_index = log2 (M/b);
 	headers = new node*[last_index + 1]();
 	head = malloc(M);
 	headers[last_index] = (struct node*) head;
-	headers[last_index]->next = null_ptr;
+	headers[last_index]->next = NULL;
 	headers[last_index]->size = M;
-	
+	return 0;
 } 
+int release_allocator(){
+	
+}
 
 extern Addr my_malloc(unsigned int _length) {
   /* This preliminary implementation simply hands the call over the 
      the C standard library! 
      Of course this needs to be replaced by your implementation.
   */
+ 
+  int fitting_index = -1;
+  for(int i = 0; i < headers.size(); i++){
+	  if(_length <= (b * (i+1)) - header_size){
+			if(headers[i] != NULL){
+				headers[i]->size += 1;
+				return (char*) headers[i] + header_size;
+			}else{
+				
+			}
+			fitting_index = i;
+	  }
+  }
+  if(fitting_index = -1){
+	  //TODO: handle error where not enough memory
+  }
   return malloc((size_t)_length);
 }
 

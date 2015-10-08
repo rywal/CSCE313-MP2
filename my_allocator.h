@@ -20,6 +20,7 @@ struct node {
 	int size;
 };
 
+int header_size = sizeof(node);
 node** headers;
 node* head;
 int M, b;
