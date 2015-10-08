@@ -12,8 +12,9 @@
 
 */
 
-#include<stdlib.h>
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 #include "my_allocator.h"
 
@@ -123,15 +124,16 @@ void combine(Addr _a){
 	struct node *current_node = (struct node*)_a;
 	int size = current_node->size - 1;
 	int current_index = log2(size/b);
-	if(current_index == last_index)	return;
-	struct node *buddy_node = (struct node*)((unsigned long)current_node ^ (unsigned long) size)
+	if(current_index == log2(M/b))	return;
+    struct node *buddy_node = (struct node*)((unsigned long)current_node ^ (unsigned long) size);
 	if(buddy_node->size % 2 == 0){
 		//buddy node is empty
 		//combine
 		struct node *large_node = current_node;
 		large_node->size = size * 2;
 		large_node->next = NULL;
-		memcpy(_a + header_size, 0, large_node->size - header_size);
+        void* start_point = (char*)_a + header_size;
+		memset(start_point, 0, (int)(large_node->size - header_size));
 		combine(_a);
 	}else{
 		//buddy node in use
@@ -145,9 +147,9 @@ void combine(Addr _a){
 extern int my_free(Addr _a) {
 	//TODO: Handle case of trying to free already free address
     // Get start of header
-    Addr adjusted_address = _a - header_size;
+    Addr adjusted_address = (Addr)((char*)_a - header_size);
 	struct node *current_node = (struct node*)adjusted_address;
-    memccpy(_a, 0, current_node->size - header_size);
+    memset(_a, 0, current_node->size - header_size);
 	combine(adjusted_address);     
     return 0;
 }
