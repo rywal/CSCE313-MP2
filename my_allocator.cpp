@@ -24,11 +24,18 @@ int M, b;
 
 void print_list(){
     for (int x = 0; x <= log2(M/b); x++) {
-        if(headers[x] != NULL)
-            printf("Element %i: Free\n", x);
-        else
-            printf("Element %i: Taken\n", x);
-            
+        if(headers[x] != NULL){
+            printf("Element %i: size(%i)", x, headers[x]->size);
+            node* current_node = headers[x];
+            while (current_node->next != NULL) {
+                printf(" - > size(%i)", current_node->size);
+                current_node = current_node->next;
+            }
+            printf("\n");
+        } else {
+            printf("Element %i: NULL\n", x);
+        }
+        
     }
 }
 
@@ -59,6 +66,8 @@ void init_block(node* start, int size){
 }
 
 int choose_index(unsigned int _length){
+    // printf("\n--In choose_index\n");
+    // print_list();
     int number_headers = log2 (M/b);
 	for(int i = 0; i <= number_headers; i++){
 		if(headers[i] != NULL && (_length <= size_available(i))) {

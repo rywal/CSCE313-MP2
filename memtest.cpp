@@ -15,14 +15,14 @@ int main(int argc, char ** argv) {
     print_list();
     
     printf("\nStep 2\n");
-    Addr address1 = my_malloc(300);
+    Addr address1 = my_malloc(80);
+    print_list();
     
     printf("\nStep 3\n");
-    print_list();
-    
-    printf("\nStep 4\n");
     Addr address2 = my_malloc(100);
     print_list();
+    
+    
     //ackerman_main();
 
     // release_allocator()
