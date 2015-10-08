@@ -25,7 +25,10 @@ int M, b;
 void print_list(){
     for (int x = 0; x <= log2(M/b); x++) {
         if(headers[x] != NULL)
-            printf("Element: %i\n", x);
+            printf("Element %i: Free\n", x);
+        else
+            printf("Element %i: Taken\n", x);
+            
     }
 }
 
