@@ -55,6 +55,14 @@ unsigned int init_allocator(unsigned int _basic_block_size, unsigned int _length
 }
 
 int release_allocator(){
+    free(head);
+    
+    delete(headers);
+    
+    header_size = 0;
+    M = 0;
+    b = 0;
+    
     return 0;
 }
 
@@ -97,7 +105,15 @@ extern Addr my_malloc(unsigned int _length) {
 	 the C standard library! 
 	 Of course this needs to be replaced by your implementation.
 	*/
+    if (_length > M-header_size){
+        printf("Cannot allocate for size %i, not enough space.\n", _length);
+        return NULL;
+    }
 	int index = choose_index(_length);
+    if(index == -1){
+        printf("Cannot find space for size %i, not enough space.\n", _length);
+        return NULL;
+    }
 	headers[index]->size += 1;
 	Addr result = (Addr)((char *)headers[index] + header_size);
 	if(headers[index]->next != NULL && headers[index]->next->size %2 == 0){
@@ -112,6 +128,11 @@ void add_to_free(struct node *new_node, int index){
 	new_node->next = NULL;
 	if(headers[index] != NULL){
 		struct node *ittr = headers[index];
+        if(headers[index] > new_node){
+            new_node->next = headers[index];
+            headers[index] = new_node;
+            return;
+        }
 		while(ittr->next != NULL && ittr->next < new_node){
 			ittr = ittr->next;
 		}
@@ -148,15 +169,16 @@ void remove_from_free(struct node* old_node, int index){
 }
 
 void combine(Addr _a){
-    printf("\n--In combine:\n");
-    print_list();
-    printf("\n");
-    
     struct node *current_node = (struct node*)_a;
     int size = current_node->size;
     int current_index = log2(size/b);
+    add_to_free(current_node, current_index);
+    
+//    printf("\n--In combine:\n");
+//    print_list();
+//    printf("\n");
+    
     if(current_index == log2(M/b)) {
-        add_to_free(current_node, current_index);
         return;
     }
     struct node *buddy_node = (struct node*)((unsigned long)current_node ^ (unsigned long) size);
@@ -167,14 +189,14 @@ void combine(Addr _a){
         struct node *large_node = current_node;
         large_node->size = size * 2;
         large_node->next = NULL;
+        remove_from_free(current_node, current_index);
         void* start_point = (Addr)((char*)_a + header_size);
         memset(start_point, 0, (int)(large_node->size - header_size));
-        add_to_free(large_node, current_index);
         combine(_a);
     }else{
         //buddy node in use
         //don't combine
-        add_to_free(current_node, current_index);
+        //add_to_free(current_node, current_index);
         return;
     }
 	
@@ -183,11 +205,24 @@ void combine(Addr _a){
 extern int my_free(Addr _a) {
 	//TODO: Handle case of trying to free already free address
     // Get start of header
+    if(_a == NULL) {
+        printf("Error: address not found\n");
+        return -1;
+    }
     Addr adjusted_address = (Addr)((char*)_a - header_size);
 	struct node *current_node = (struct node*)adjusted_address;
-    memset(_a, 0, current_node->size - header_size);
-    current_node->size -= 1;
-	combine(adjusted_address);     
+    if(current_node == NULL){
+        printf("Error: block does not exist\n");
+        return -1;
+    }
+    if(current_node->size % 2 == 0){
+        printf("Error: this node is already freed\n");
+        return -1;
+    } else {
+        memset(_a, 0, current_node->size - header_size);
+        current_node->size -= 1;
+        combine(adjusted_address);
+    }
     return 0;
 }
 
