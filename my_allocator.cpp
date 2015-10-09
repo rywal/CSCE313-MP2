@@ -174,6 +174,8 @@ void combine(Addr _a){
     struct node *current_node = (struct node*)_a;
     int size = current_node->size;
     int current_index = log2(size/b);
+//    printf("index: %i index: %i", size, current_index);
+    
     add_to_free(current_node, current_index);
     
 //    printf("\n--In combine:\n");
@@ -181,24 +183,33 @@ void combine(Addr _a){
 //    printf("\n");
     
     if(current_index == log2(M/b)) {
+        //printf("current_index == log2...\n");
         return;
     }
-    struct node *buddy_node = (struct node*)((unsigned long)current_node ^ (unsigned long) size);
+    int offset = (char*)current_node - (char*)head;
+    int boffset = (unsigned long long)offset ^ (unsigned long long)size;
+    struct node *buddy_node = (struct node*) ((char *)head + boffset);
     if(buddy_node->size % 2 == 0){
         //buddy node is empty
         //combine
         remove_from_free(buddy_node, current_index);
-        struct node *large_node = current_node;
+        struct node *large_node;
+        if(buddy_node < current_node)
+            large_node = buddy_node;
+        else
+            large_node = current_node;
         large_node->size = size * 2;
         large_node->next = NULL;
         remove_from_free(current_node, current_index);
-        void* start_point = (Addr)((char*)_a + header_size);
-        memset(start_point, 0, (int)(large_node->size - header_size));
-        combine(_a);
+        void* start_point = (Addr)((char*)large_node + header_size);
+        printf("Working with size: %i - Address: %p\n", large_node->size, start_point);
+        memset(start_point, 0, large_node->size - header_size);
+        combine(large_node);
     }else{
         //buddy node in use
         //don't combine
-        //add_to_free(current_node, current_index);
+        void* start_point = (Addr)((char*)current_node + header_size);
+        memset(start_point, 0, current_node->size - header_size);
         return;
     }
 	
@@ -221,7 +232,7 @@ extern int my_free(Addr _a) {
         printf("Error: this node is already freed\n");
         return -1;
     } else {
-        memset(_a, 0, current_node->size - header_size);
+        //memset(_a, 0, current_node->size - header_size);
         current_node->size -= 1;
         combine(adjusted_address);
     }

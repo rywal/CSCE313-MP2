@@ -28,9 +28,9 @@ int main(int argc, char ** argv) {
 //    }
 
     
-    init_allocator(base, memory);
-    //atexit(deallocate);
-    
+      init_allocator(base, memory);
+//    //atexit(deallocate);
+//    
 //    printf("Step 1 - Printing\n");
 //    print_list();
 //    
