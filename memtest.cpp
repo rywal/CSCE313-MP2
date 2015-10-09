@@ -3,13 +3,33 @@
 #include <stdlib.h>
 #include "ackerman.h"
 #include "my_allocator.h"
+//#include <getopt.h>
+#include <stdlib.h>
 
 int main(int argc, char ** argv) {
     // Default values
-    int M = 512*1024;
-    int b = 128;
+    int memory = 512*1024;
+    int base = 128;
     
-    init_allocator(b, M);
+//    int opt;
+//    
+//    while ((opt = getopt(argc, argv, "b:s:")) != -1) {
+//        switch (opt) {
+//            case 'b':
+//                base = atoi(optarg);
+//                break;
+//            case 's':
+//                memory = atoi(optarg);
+//                break;
+//            default:
+//                base = 128;
+//                memory = 512*1024;
+//        }
+//    }
+
+    
+    init_allocator(base, memory);
+    //atexit(deallocate);
     
 //    printf("Step 1 - Printing\n");
 //    print_list();
@@ -39,6 +59,6 @@ int main(int argc, char ** argv) {
 //    print_list();
     
     ackerman_main();
-
+    
     release_allocator();
 }

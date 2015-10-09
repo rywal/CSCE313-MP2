@@ -51,23 +51,25 @@ unsigned int init_allocator(unsigned int _basic_block_size, unsigned int _length
 	headers[last_index] = (struct node*) head;
 	headers[last_index]->next = NULL;
 	headers[last_index]->size = M;
-	return 0;
+	return _length-header_size;
 }
 
 int release_allocator(){
-    free(head);
-    
-    delete(headers);
-    
-    header_size = 0;
-    M = 0;
-    b = 0;
+    if(M != 0){
+        free(head);
+        
+        delete(headers);
+        
+        header_size = 0;
+        M = 0;
+        b = 0;
+    }
     
     return 0;
 }
 
 int size_available(int i){
-	return (b*pow(2, i))-header_size;
+	return ((b*pow(2, i))-header_size);
 }
 
 int choose_index(unsigned int _length){
@@ -107,12 +109,12 @@ extern Addr my_malloc(unsigned int _length) {
 	*/
     if (_length > M-header_size){
         printf("Cannot allocate for size %i, not enough space.\n", _length);
-        return NULL;
+        return 0;
     }
 	int index = choose_index(_length);
     if(index == -1){
         printf("Cannot find space for size %i, not enough space.\n", _length);
-        return NULL;
+        return 0;
     }
 	headers[index]->size += 1;
 	Addr result = (Addr)((char *)headers[index] + header_size);
