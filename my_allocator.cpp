@@ -202,7 +202,7 @@ void combine(Addr _a){
         large_node->next = NULL;
         remove_from_free(current_node, current_index);
         void* start_point = (Addr)((char*)large_node + header_size);
-        printf("Working with size: %i - Address: %p\n", large_node->size, start_point);
+        //printf("Working with size: %i - Address: %p\n", large_node->size, start_point);
         memset(start_point, 0, large_node->size - header_size);
         combine(large_node);
     }else{
