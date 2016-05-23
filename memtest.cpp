@@ -6,6 +6,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 
+
 int main(int argc, char ** argv) {
     // Default values
     int memory = 512*1024;
